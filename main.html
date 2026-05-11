@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Multi HTML Import</title>
+
+  <link rel="stylesheet" href="css/header.css">
+</head>
+<body>
+
+  <div id="header"></div>
+
+  <div id="page1"></div>
+
+  <div id="page2"></div>
+
+  <script>
+
+    function loadComponent(file, id, callback = null) {
+
+      fetch(file)
+        .then(response => response.text())
+        .then(data => {
+
+          document.getElementById(id).innerHTML = data;
+
+          if (callback) {
+            callback();
+          }
+
+        })
+        .catch(error => {
+          console.log("Error loading:", file, error);
+        });
+    }
+
+    function initHeader() {
+
+      const menuBtn = document.getElementById("menuBtn");
+      const closeBtn = document.getElementById("closeBtn");
+      const navMenu = document.getElementById("navMenu");
+      const menuOverlay = document.getElementById("menuOverlay");
+
+      if (!menuBtn) return;
+
+      menuBtn.addEventListener("click", () => {
+        navMenu.classList.add("show");
+        menuOverlay.classList.add("show");
+      });
+
+      function closeMenu() {
+        navMenu.classList.remove("show");
+        menuOverlay.classList.remove("show");
+      }
+
+      closeBtn.addEventListener("click", closeMenu);
+
+      menuOverlay.addEventListener("click", closeMenu);
+
+      const navLinks = document.querySelectorAll(".nav a");
+
+      navLinks.forEach(link => {
+
+        link.addEventListener("click", function () {
+
+          navLinks.forEach(nav => {
+            nav.classList.remove("active");
+          });
+
+          this.classList.add("active");
+
+          if(window.innerWidth <= 768){
+            closeMenu();
+          }
+
+        });
+
+      });
+
+    }
+
+    loadComponent("components/header.html", "header", initHeader);
+
+    loadComponent("components/page1.html", "page1");
+
+    loadComponent("components/page2.html", "page2");
+
+  </script>
+
+</body>
+</html>
